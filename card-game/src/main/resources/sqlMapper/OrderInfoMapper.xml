@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.OrderInfoDao">
+	<resultMap id="OrderInfoResultMap"
+		type="com.oshare.thirdparty.entity.model.OrderInfoModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="orderNo" column="order_no" jdbcType="VARCHAR" />
+		<result property="payOrderNo" column="pay_order_no" jdbcType="VARCHAR" />
+		<result property="orderAmount" column="order_amount" jdbcType="DOUBLE" />
+		<result property="type" column="type" jdbcType="SMALLINT" />
+		<result property="origin" column="origin" jdbcType="SMALLINT" />
+		<result property="createdTime" column="created_time" jdbcType="TIMESTAMP" />
+		<result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.oshare.thirdparty.entity.model.OrderInfoModel">
+		INSERT INTO biz_order_info
+		(order_no,pay_order_no,order_amount,type,origin,created_time,updated_time)
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{id,
+			jdbcType=BIGINT},
+			#{orderNo, jdbcType=VARCHAR},
+			#{payOrderNo,
+			jdbcType=VARCHAR},
+			#{orderAmount, jdbcType=DOUBLE},
+			#{type,
+			jdbcType=SMALLINT},
+			#{origin, jdbcType=SMALLINT},
+			#{createdTime,
+			jdbcType=TIMESTAMP},
+			#{updatedTime, jdbcType=TIMESTAMP},
+		</trim>
+	</insert>
+
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT INTO biz_order_info
+		(order_no,pay_order_no,order_amount,type,origin,created_time,updated_time)
+		<trim prefix="VALUES" suffixOverrides=",">
+			<if test="list != null">
+				<foreach collection="list" item="item" index="index"
+					separator=",">
+					<trim prefix="(" suffix=")" suffixOverrides=",">
+						#{item.id,
+						jdbcType=BIGINT},
+						#{item.orderNo, jdbcType=VARCHAR},
+						#{item.payOrderNo, jdbcType=VARCHAR},
+						#{item.orderAmount,
+						jdbcType=DOUBLE},
+						#{item.type, jdbcType=SMALLINT},
+						#{item.origin,
+						jdbcType=SMALLINT},
+						#{item.createdTime, jdbcType=TIMESTAMP},
+						#{item.updatedTime, jdbcType=TIMESTAMP},
+					</trim>
+				</foreach>
+			</if>
+		</trim>
+	</insert>
+
+	<insert id="insertSelective" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.oshare.thirdparty.entity.model.OrderInfoModel">
+		INSERT INTO biz_order_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="orderNo != null">order_no,</if>
+			<if test="payOrderNo != null">pay_order_no,</if>
+			<if test="orderAmount != null">order_amount,</if>
+			<if test="type != null">type,</if>
+			<if test="origin != null">origin,</if>
+			<if test="createdTime != null">created_time,</if>
+			<if test="updatedTime != null">updated_time,</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			<if test="id != null">#{id, jdbcType=BIGINT},</if>
+			<if test="orderNo != null">#{orderNo, jdbcType=VARCHAR},</if>
+			<if test="payOrderNo != null">#{payOrderNo, jdbcType=VARCHAR},</if>
+			<if test="orderAmount != null">#{orderAmount, jdbcType=DOUBLE},</if>
+			<if test="type != null">#{type, jdbcType=SMALLINT},</if>
+			<if test="origin != null">#{origin, jdbcType=SMALLINT},</if>
+			<if test="createdTime != null">#{createdTime, jdbcType=TIMESTAMP},</if>
+			<if test="updatedTime != null">#{updatedTime, jdbcType=TIMESTAMP},</if>
+		</trim>
+	</insert>
+
+	<select id="selectByPrimaryKey" resultMap="OrderInfoResultMap"
+		parameterType="java.lang.Long">
+		SELECT
+		id,order_no,pay_order_no,order_amount,type,origin,created_time,updated_time
+		FROM biz_order_info
+		<where>
+			id = #{id, jdbcType=VARCHAR}
+		</where>
+	</select>
+
+	<select id="selectBatchByPrimaryKey" resultMap="OrderInfoResultMap"
+		parameterType="java.util.List">
+		SELECT
+		id,order_no,pay_order_no,order_amount,type,origin,created_time,updated_time
+		FROM biz_order_info
+		<where>
+			<if test="list != null">
+				<foreach collection="list" index="index" item="id" open=" id IN ("
+					separator="," close=")">
+					#{id, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByParams" resultMap="OrderInfoResultMap"
+		parameterType="java.util.HashMap">
+		SELECT
+		id,order_no,pay_order_no,order_amount,type,origin,created_time,updated_time
+		FROM biz_order_info
+		<where>
+			<if test="id != null">
+				AND id = #{id, jdbcType=BIGINT}
+			</if>
+			<if test="orderNo != null">
+				AND order_no = #{orderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="payOrderNo != null">
+				AND pay_order_no = #{payOrderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="orderAmount != null">
+				AND order_amount = #{orderAmount, jdbcType=DOUBLE}
+			</if>
+			<if test="type != null">
+				AND type = #{type, jdbcType=SMALLINT}
+			</if>
+			<if test="origin != null">
+				AND origin = #{origin, jdbcType=SMALLINT}
+			</if>
+			<if test="createdTime != null">
+				AND created_time = #{createdTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="updatedTime != null">
+				AND updated_time = #{updatedTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="ids != null">
+				<foreach collection="ids" index="index" item="id" open=" AND id IN ("
+					separator="," close=")">
+					#{id, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY id DESC
+		<if test="offset != null and size != null">LIMIT #{offset}, #{size}</if>
+	</select>
+
+	<select id="countByParams" resultType="java.lang.Integer"
+		parameterType="java.util.HashMap">
+		SELECT COUNT(1) FROM biz_order_info
+		<where>
+			<if test="id != null">
+				AND id = #{id, jdbcType=BIGINT}
+			</if>
+			<if test="orderNo != null">
+				AND order_no = #{orderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="payOrderNo != null">
+				AND pay_order_no = #{payOrderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="orderAmount != null">
+				AND order_amount = #{orderAmount, jdbcType=DOUBLE}
+			</if>
+			<if test="type != null">
+				AND type = #{type, jdbcType=SMALLINT}
+			</if>
+			<if test="origin != null">
+				AND origin = #{origin, jdbcType=SMALLINT}
+			</if>
+			<if test="createdTime != null">
+				AND created_time = #{createdTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="updatedTime != null">
+				AND updated_time = #{updatedTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="ids != null">
+				<foreach collection="ids" index="index" item="id" open=" AND id IN ("
+					separator="," close=")">
+					#{id, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="selectFirstByParams" resultMap="OrderInfoResultMap"
+		parameterType="java.util.HashMap">
+		SELECT
+		id,order_no,pay_order_no,order_amount,type,origin,created_time,updated_time
+		FROM biz_order_info
+		<where>
+			<if test="id != null">
+				AND id = #{id, jdbcType=BIGINT}
+			</if>
+			<if test="orderNo != null">
+				AND order_no = #{orderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="payOrderNo != null">
+				AND pay_order_no = #{payOrderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="orderAmount != null">
+				AND order_amount = #{orderAmount, jdbcType=DOUBLE}
+			</if>
+			<if test="type != null">
+				AND type = #{type, jdbcType=SMALLINT}
+			</if>
+			<if test="origin != null">
+				AND origin = #{origin, jdbcType=SMALLINT}
+			</if>
+			<if test="createdTime != null">
+				AND created_time = #{createdTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="updatedTime != null">
+				AND updated_time = #{updatedTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="ids != null">
+				<foreach collection="ids" index="index" item="id" open=" AND id IN ("
+					separator="," close=")">
+					#{id, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY id DESC LIMIT 1
+	</select>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.oshare.thirdparty.entity.model.OrderInfoModel">
+		UPDATE biz_order_info
+		<set>
+			<if test="orderNo != null">order_no = #{orderNo, jdbcType=VARCHAR},</if>
+			<if test="payOrderNo != null">pay_order_no = #{payOrderNo, jdbcType=VARCHAR},</if>
+			<if test="orderAmount != null">order_amount = #{orderAmount, jdbcType=DOUBLE},</if>
+			<if test="type != null">type = #{type, jdbcType=SMALLINT},</if>
+			<if test="origin != null">origin = #{origin, jdbcType=SMALLINT},</if>
+			<if test="createdTime != null">created_time = #{createdTime, jdbcType=TIMESTAMP},</if>
+			<if test="updatedTime != null">updated_time = #{updatedTime, jdbcType=TIMESTAMP},</if>
+		</set>
+		<where>
+			id = #{id, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="com.oshare.thirdparty.entity.model.OrderInfoModel">
+		UPDATE biz_order_info
+		<set>
+			order_no = #{orderNo, jdbcType=VARCHAR},
+			pay_order_no =
+			#{payOrderNo, jdbcType=VARCHAR},
+			order_amount = #{orderAmount,
+			jdbcType=DOUBLE},
+			type = #{type, jdbcType=SMALLINT},
+			origin = #{origin,
+			jdbcType=SMALLINT},
+			created_time = #{createdTime, jdbcType=TIMESTAMP},
+			updated_time = #{updatedTime, jdbcType=TIMESTAMP},
+		</set>
+		<where>
+			id = #{id, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		DELETE FROM biz_order_info
+		<where>
+			id = #{id, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<update id="deleteBatchByPrimaryKey" parameterType="java.util.List">
+		DELETE FROM biz_order_info
+		<where>
+			<if test="list != null">
+				<foreach collection="list" index="index" item="id" open=" id IN ("
+					separator="," close=")">
+					#{id, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+	</update>
+
+	<update id="deleteByParams" parameterType="java.util.HashMap">
+		DELETE FROM biz_order_info
+		<where>
+			<if test="id != null">
+				AND id = #{id, jdbcType=BIGINT}
+			</if>
+			<if test="orderNo != null">
+				AND order_no = #{orderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="payOrderNo != null">
+				AND pay_order_no = #{payOrderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="orderAmount != null">
+				AND order_amount = #{orderAmount, jdbcType=DOUBLE}
+			</if>
+			<if test="type != null">
+				AND type = #{type, jdbcType=SMALLINT}
+			</if>
+			<if test="origin != null">
+				AND origin = #{origin, jdbcType=SMALLINT}
+			</if>
+			<if test="createdTime != null">
+				AND created_time = #{createdTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="updatedTime != null">
+				AND updated_time = #{updatedTime, jdbcType=TIMESTAMP}
+			</if>
+		</where>
+	</update>
+</mapper>

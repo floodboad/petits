@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.MemberLevelInfoDao">
+
+	<resultMap id="BizMemberLevelInfoModelResultMap"
+		type="com.oshare.thirdparty.entity.model.MemberLevelInfoModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		<result property="description" column="description" jdbcType="VARCHAR" />
+		<result property="sortNo" column="sort_no" jdbcType="INTEGER" />
+		<result property="money" column="money" jdbcType="DOUBLE" />
+		<result property="ownCardNumber" column="own_card_number"
+			jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 获取会员信息 -->
+	<select id="queryMemberInfos" resultMap="BizMemberLevelInfoModelResultMap">
+		<![CDATA[
+			SELECT id,name,description,sort_no,money,own_card_number FROM biz_member_level_info
+		]]>
+	</select>
+
+</mapper>

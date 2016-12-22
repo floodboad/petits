@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.UserDao">
+
+	<resultMap id="BizUserModelResultMap" type="com.oshare.thirdparty.entity.model.UserModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="mobile" column="mobile" jdbcType="VARCHAR" />
+		<result property="username" column="username" jdbcType="VARCHAR" />
+		<result property="password" column="password" jdbcType="VARCHAR" />
+		<result property="invitationCode" column="invitation_code" jdbcType="VARCHAR" />
+		<result property="upLineMobile" column="up_line_mobile" jdbcType="VARCHAR" />
+		<result property="avatar" column="avatar" jdbcType="VARCHAR" />
+		<result property="role" column="role" jdbcType="SMALLINT" />
+		<result property="status" column="status" jdbcType="SMALLINT" />
+		<result property="sex" column="sex" jdbcType="SMALLINT" />
+		<result property="accountLevel" column="account_level" jdbcType="SMALLINT" />
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="SearchUserResultMap" type="com.oshare.thirdparty.entity.bean.SearchUserResBean">
+		<result property="mobile" column="mobile" jdbcType="VARCHAR" />
+		<result property="username" column="username" jdbcType="VARCHAR" />
+		<result property="avatar" column="avatar" jdbcType="VARCHAR" />
+		<result property="sex" column="sex" jdbcType="SMALLINT" />
+		<result property="accountLevel" column="account_level" jdbcType="SMALLINT" />
+		<result property="ownCards" column="own_cards" jdbcType="SMALLINT" />
+	</resultMap>
+
+	<select id="login" parameterType="string" resultMap="BizUserModelResultMap">
+		<![CDATA[ 
+			SELECT id,mobile,username,password,invitation_code,up_line_mobile,avatar,role,status,sex,account_level,create_time,update_time
+			FROM biz_user WHERE mobile = #{mobile,jdbcType=VARCHAR} AND password = #{password, jdbcType=VARCHAR} limit 1
+		]]>
+	</select>
+
+	<insert id="signUp" parameterType="com.oshare.thirdparty.entity.model.UserModel">
+		<![CDATA[
+			INSERT INTO biz_user
+				(mobile, username, password, invitation_code, up_line_mobile, avatar,account_level, create_time, update_time)
+			VALUES (#{mobile},#{username},#{password},#{invitationCode},#{upLineMobile},#{avatar},#{accountLevel}, NOW(),NOW())
+		]]>
+	</insert>
+
+	<update id="updateProfile" parameterType="com.oshare.thirdparty.entity.model.UserModel">
+		UPDATE biz_user
+		<set>
+			<if test="mobile !=null and mobile !=''">mobile = #{mobile, jdbcType=VARCHAR},</if>
+			<if test="username != null and username !=''">username = #{username, jdbcType=VARCHAR},</if>
+			<if test="password != null and password !=''">password = #{password, jdbcType=VARCHAR},</if>
+			<if test="invitationCode != null and invitationCode !=''">invitation_code = #{invitationCode, jdbcType=VARCHAR},
+			</if>
+			<if test="upLineMobile != null and upLineMobile !=''">up_line_mobile = #{upLineMobile, jdbcType=VARCHAR},</if>
+			<if test="avatar != null and avatar !=''">avatar = #{avatar, jdbcType=VARCHAR},</if>
+			<if test="role != null">role = #{role, jdbcType=SMALLINT},</if>
+			<if test="status != null">status = #{status, jdbcType=SMALLINT},</if>
+			<if test="sex != null">sex = #{sex, jdbcType=SMALLINT},</if>
+			<if test="accountLevel != null">account_level = #{accountLevel, jdbcType=SMALLINT},</if>
+			<if test="updateTime != null">update_time = #{updateTime, jdbcType=TIMESTAMP},</if>
+		</set>
+		<where>
+			id = #{id, jdbcType=BIGINT}
+		</where>
+	</update>
+
+	<select id="searchUsers" parameterType="string" resultMap="SearchUserResultMap">
+		<![CDATA[ 
+			SELECT u.mobile, u.username, u.avatar, u.sex, u.account_level,
+				(select count(*) from biz_user_cards c where c.user_id= u.id ) as own_cards
+			FROM biz_user u WHERE u.mobile like '%${mobile}%'
+		]]>
+	</select>
+
+	<update id="updatePassword" parameterType="string">
+		<![CDATA[ 
+			UPDATE biz_user SET password=#{password, jdbcType=VARCHAR}, update_time=NOW()
+			WHERE mobile= #{mobile,jdbcType=VARCHAR}
+		]]>
+	</update>
+
+	<select id="getUser" parameterType="string" resultMap="BizUserModelResultMap">
+		<![CDATA[ 
+			SELECT id,mobile,username,password,invitation_code,up_line_mobile,avatar,role,status,sex,account_level,create_time,update_time
+			FROM biz_user WHERE mobile = #{mobile,jdbcType=VARCHAR} limit 1
+		]]>
+	</select>
+	<select id="getUserByInvitationCode" parameterType="string" resultMap="BizUserModelResultMap">
+		<![CDATA[ 
+			SELECT id,mobile,username,password,invitation_code,up_line_mobile,avatar,role,status,sex,account_level,create_time,update_time
+			FROM biz_user WHERE invitation_code = #{invitationCode,jdbcType=VARCHAR} limit 1
+		]]>
+	</select>
+
+	<update id="enhanceMemberLevel">
+		UPDATE biz_user
+		set account_level = #{levelId, jdbcType=SMALLINT}
+		WHERE id = #{id,jdbcType=BIGINT}
+	</update>
+
+</mapper>

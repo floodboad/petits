@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.CardExchangeLogDao">
+
+	<resultMap id="BizCardExchangeLogModelResultMap"
+		type="com.oshare.thirdparty.entity.model.CardExchangeLogModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="userId" column="user_id" jdbcType="BIGINT" />
+		<result property="cardNo" column="card_no" jdbcType="VARCHAR" />
+		<result property="status" column="status" jdbcType="SMALLINT" />
+		<result property="channel" column="channel" jdbcType="SMALLINT" />
+		<result property="orderNo" column="order_no" jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<!-- 查询提现日志 -->
+	<select id="queryExchangeLogs" resultMap="BizCardExchangeLogModelResultMap"
+		parameterType="java.lang.Long">
+		SELECT
+		id,user_id,card_no,status,channel,order_no,create_time,update_time
+		FROM biz_card_exchange_log WHERE user_id = #{userId, jdbcType=BIGINT}
+	</select>
+
+	<!-- 保存提现日志 -->
+	<insert id="insertLog" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.oshare.thirdparty.entity.model.CardExchangeLogModel">
+		INSERT INTO biz_card_exchange_log
+		(user_id,card_no,status,channel,order_no,create_time,update_time)
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{id,jdbcType=BIGINT},
+			#{userId,jdbcType=BIGINT},
+			#{cardNo,jdbcType=VARCHAR},
+			#{status,jdbcType=SMALLINT},
+			#{channel,jdbcType=SMALLINT},
+			#{orderNo,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateTime,jdbcType=TIMESTAMP},
+		</trim>
+	</insert>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.CardDonateLogDao">
+
+	<resultMap id="BizCardDonateLogModelResultMap"
+		type="com.oshare.thirdparty.entity.model.CardDonateLogModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="cardNo" column="card_no" jdbcType="VARCHAR" />
+		<result property="donator" column="donator" jdbcType="BIGINT" />
+		<result property="donater" column="donater" jdbcType="BIGINT" />
+		<result property="donatedTime" column="donated_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<!-- 保存卡片赠送日志 -->
+	<insert id="saveCardDonateLog" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.oshare.thirdparty.entity.model.CardDonateLogModel">
+		INSERT INTO biz_card_donate_log (card_no,donator,donater,donated_time)
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{cardNo,jdbcType=VARCHAR},
+			#{donator,jdbcType=BIGINT},
+			#{donater,jdbcType=BIGINT},
+			#{donatedTime,jdbcType=TIMESTAMP},
+		</trim>
+	</insert>
+
+</mapper>

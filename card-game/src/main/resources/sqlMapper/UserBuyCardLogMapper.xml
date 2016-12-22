@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.UserBuyCardLogDao">
+	<resultMap id="BizUserBuyCardLogModelResultMap"
+		type="com.oshare.thirdparty.entity.model.UserBuyCardLogModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="cardNo" column="card_no" jdbcType="VARCHAR" />
+		<result property="userId" column="user_id" jdbcType="BIGINT" />
+		<result property="channel" column="channel" jdbcType="SMALLINT" />
+		<result property="orderNo" column="order_no" jdbcType="VARCHAR" />
+		<result property="money" column="money" jdbcType="DOUBLE" />
+		<result property="buyDate" column="buy_date" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<!-- 保存用户购买卡片日志 -->
+	<insert id="saveUserBuyCardLog" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.oshare.thirdparty.entity.model.UserBuyCardLogModel">
+		INSERT INTO biz_user_buy_card_log
+		(card_no,user_id,channel,order_no,money,buy_date)
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{cardNo,jdbcType=VARCHAR},
+			#{userId, jdbcType=BIGINT},
+			#{channel,jdbcType=SMALLINT},
+			#{orderNo, jdbcType=VARCHAR},
+			#{money,jdbcType=DOUBLE},
+			#{buyDate,jdbcType=TIMESTAMP},
+		</trim>
+	</insert>
+
+	<!-- 更新购买卡片日志 -->
+	<update id="updateBuyCardLog"
+		parameterType="com.oshare.thirdparty.entity.model.UserBuyCardLogModel">
+		UPDATE biz_user_buy_card_log
+		<set>
+			<if test="cardNo != null">card_no = #{cardNo, jdbcType=VARCHAR},</if>
+			<if test="userId != null">user_id = #{userId, jdbcType=BIGINT},</if>
+			<if test="channel != null">channel = #{channel, jdbcType=SMALLINT},</if>
+			<if test="orderNo != null">order_no = #{orderNo, jdbcType=VARCHAR},</if>
+			<if test="money != null">money = #{money, jdbcType=DOUBLE},</if>
+			<if test="buyDate != null">buy_date = #{buyDate, jdbcType=TIMESTAMP},</if>
+		</set>
+		<where>
+			id = #{id, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+</mapper>

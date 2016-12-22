@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oshare.thirdparty.dao.UserCardDao">
+
+	<resultMap id="BizUserCardsModelResultMap"
+		type="com.oshare.thirdparty.entity.model.UserCardModel">
+		<id property="id" column="id" jdbcType="BIGINT" />
+		<result property="cardNo" column="card_no" jdbcType="VARCHAR" />
+		<result property="userId" column="user_id" jdbcType="BIGINT" />
+		<result property="xCoords" column="x_coords" jdbcType="INTEGER" />
+		<result property="yCoords" column="y_coords" jdbcType="INTEGER" />
+		<result property="value" column="value" jdbcType="INTEGER" />
+		<result property="status" column="status" jdbcType="SMALLINT" />
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="BizAllCardsBeanResultMap"
+		type="com.oshare.thirdparty.entity.bean.AllCardsResBean">
+		<result property="cardNo" column="card_no" jdbcType="VARCHAR" />
+		<result property="value" column="value" jdbcType="INTEGER" />
+		<result property="xCoords" column="x_coords" jdbcType="INTEGER" />
+		<result property="yCoords" column="y_coords" jdbcType="INTEGER" />
+		<result property="username" column="username" jdbcType="VARCHAR" />
+		<result property="mobile" column="mobile" jdbcType="VARCHAR" />
+		<result property="avatar" column="avatar" jdbcType="VARCHAR" />
+		<result property="buyTime" column="create_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+
+	<select id="getMycards" parameterType="long"
+		resultMap="BizUserCardsModelResultMap">
+		<![CDATA[
+			SELECT id,card_no,user_id,x_coords,y_coords,value,status,create_time,update_time
+			FROM biz_user_cards WHERE user_id = #{userId, jdbcType=BIGINT} AND status = 1
+		]]>
+	</select>
+
+	<insert id="addCard" useGeneratedKeys="true" keyProperty="card.id"
+		parameterType="com.oshare.thirdparty.entity.model.UserCardModel">
+		INSERT INTO biz_user_cards
+		(card_no,user_id,x_coords,y_coords,value,status,create_time,update_time)
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{card.cardNo, jdbcType=VARCHAR},
+			#{card.userId,jdbcType=BIGINT},
+			#{card.xCoords, jdbcType=INTEGER},
+			#{card.yCoords,jdbcType=INTEGER},
+			#{card.value, jdbcType=INTEGER},
+			#{card.status,jdbcType=SMALLINT},
+			#{card.createTime, jdbcType=TIMESTAMP},
+			#{card.updateTime,
+			jdbcType=TIMESTAMP},
+		</trim>
+	</insert>
+
+	<update id="updateCardInfo" parameterType="com.oshare.thirdparty.entity.model.UserCardModel"
+		statementType="PREPARED">
+		UPDATE biz_user_cards
+		<set>
+			<if test="userId != null">user_id = #{userId, jdbcType=BIGINT},</if>
+			<if test="xCoords != null and xCoords != 0">x_coords = #{xCoords, jdbcType=INTEGER},</if>
+			<if test="yCoords != null and yCoords != 0">y_coords = #{yCoords, jdbcType=INTEGER},</if>
+			<if test="value != null and value != 0">value = #{value, jdbcType=INTEGER},</if>
+			<if test="status != null">status = #{status, jdbcType=SMALLINT},</if>
+			<if test="createTime != null">create_time = #{createTime, jdbcType=TIMESTAMP},</if>
+			<if test="updateTime != null">update_time = #{updateTime, jdbcType=TIMESTAMP},</if>
+		</set>
+		<where>
+			card_no = #{cardNo, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<select id="getCards" parameterType="int" resultMap="BizAllCardsBeanResultMap">
+		<![CDATA[
+			SELECT 
+				c.card_no,c.value,c.x_coords,c.y_coords,u.username,u.mobile,u.avatar,c.create_time
+			FROM biz_user_cards c left join biz_user u on c.user_id = u.id
+			WHERE (c.x_coords BETWEEN #{xMin, jdbcType=INTEGER} AND #{xMax, jdbcType=INTEGER})
+			AND (c.y_coords BETWEEN #{yMin, jdbcType=INTEGER} and #{yMax, jdbcType=INTEGER}) AND c.status = 1
+		]]>
+	</select>
+	
+	<select id="searchCards" resultMap="BizAllCardsBeanResultMap">
+		SELECT 
+			c.card_no,c.value,c.x_coords,c.y_coords,u.username,u.mobile,u.avatar,c.create_time
+		FROM biz_user_cards c left join biz_user u on c.user_id = u.id
+		WHERE c.status = 1
+		<if test="cardNo!=null and cardNo !=''">
+			AND c.card_no LIKE '%${cardNo}%'
+		</if>
+		<if test="score!=null and score !=''">
+			AND c.value = #{score}
+		</if>
+		<if test="mobile !=null and mobile !=''">
+			AND u.mobile = ''
+		</if>
+		<if test="begin!=null and end!=null">
+			AND (c.create_time between #{begin} and #{end})
+		</if>
+		limit #{index},#{offset}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		DELETE FROM biz_user_cards
+		<where>
+			id = #{id, jdbcType=VARCHAR}
+		</where>
+	</delete>
+
+	<update id="donateCard">
+		UPDATE biz_user_cards
+		SET
+		user_id= #{donaterId,jdbcType=BIGINT},
+		create_time=NOW(),
+		update_time=NOW()
+		WHERE status=1 AND user_id = #{donatorId,jdbcType=BIGINT} 
+			AND card_no IN
+		<foreach collection="cardNos" item="cardNo" open="(" close=")" separator=",">
+			#{cardNo}
+		</foreach>
+	</update>
+	
+	<!-- 设置卡片积分 -->
+	<update id="setCardValue" parameterType="com.oshare.thirdparty.entity.model.UserCardModel">
+		UPDATE biz_user_cards SET value = #{value} WHERE status = 1 AND card_no = #{cardNo}
+	</update>
+
+</mapper>
