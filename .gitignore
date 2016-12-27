@@ -10,3 +10,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+card-game/target/m2e-wtp/web-resources/META-INF/maven/com.oshare.thirdparty/card-game/pom.properties
+card-game/target/m2e-wtp/web-resources/META-INF/MANIFEST.MF
+card-game/target/classes/properties/logback.xml
+card-game/target/m2e-wtp/web-resources/META-INF/maven/com.oshare.thirdparty/card-game/pom.xml
